@@ -2,6 +2,13 @@
 
 Some math-related Scala code written just for fun.
 
+## Features
+
+### Strict arithmetic
+
+[Rational numbers](https://en.wikipedia.org/wiki/Rational_number):
+TODO
+
 ## Contributing
 
 Prerequisites:

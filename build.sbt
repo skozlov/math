@@ -33,6 +33,10 @@ lazy val algebra = (project in file("algebra"))
   .settings(name := "algebra")
   .dependsOn(arithmetic, commonsTest % Test)
 
+lazy val demo = (project in file("demo"))
+  .settings(name := "demo")
+  .dependsOn(arithmetic, algebra)
+
 lazy val root = (project in file("."))
   .settings(name := "math")
   .aggregate(commonsLang, commonsTest, arithmetic, algebra)
