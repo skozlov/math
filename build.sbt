@@ -22,7 +22,7 @@ lazy val commonsLang =
 
 lazy val commonsTest = (project in file("commons/test")).settings(
   name := "commons-test",
-  libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.2.14"),
+  libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.2.15"),
 )
 
 lazy val arithmetic = (project in file("arithmetic"))
