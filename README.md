@@ -7,7 +7,7 @@ Some math-related Scala code written just for fun.
 ### Strict arithmetic
 
 [Rational numbers](https://en.wikipedia.org/wiki/Rational_number):
-TODO
+https://github.com/skozlov/math/blob/24e28a6fefb4de33a78c83fc747e65ec851425be/demo/src/main/scala/com/github/skozlov/math/demo/arithmetic/quickstart/rational.sc#L1-L9
 
 ## Contributing
 
