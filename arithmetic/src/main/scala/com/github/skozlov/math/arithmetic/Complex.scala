@@ -3,7 +3,36 @@ package com.github.skozlov.math.arithmetic
 import Implicits.longToRational
 
 case class Complex(realPart: Real, imaginaryPart: Real) {
-  override def toString: String = s"($realPart) + i * ($imaginaryPart)"
+  val isReal: Boolean = imaginaryPart == 0.r
+
+  override def toString: String = {
+    if (isReal) {
+      realPart.toString
+    }
+    else if (this == -i) {
+      "-i"
+    }
+    else {
+      val real: Option[String] = Some(realPart) filter { _ != 0.r } map {
+        case r: Rational => r.toString
+        case r => s"($r)"
+      }
+      val imgMinus: Option[String] = imaginaryPart match {
+        case img: Rational if img.sign == -1 => Some("-")
+        case _ => None
+      }
+      val imgFactor: Option[String] = imgMinus
+        .map { _ => imaginaryPart.abs }
+        .orElse(Some(imaginaryPart))
+        .filter { _ != 1.r }
+        .map {
+          case r: Rational => r.toString
+          case r => s"($r)"
+        }
+      val imgSign: Option[String] = imgMinus orElse (real map { _ => "+" })
+      Seq(real, imgSign, imgFactor, Some("i")).flatten mkString " "
+    }
+  }
 
   def unary_- : Complex = Complex(-realPart, -imaginaryPart)
 
