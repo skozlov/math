@@ -41,12 +41,16 @@ lazy val root = (project in file("."))
   .settings(name := "math")
   .aggregate(commonsLang, commonsTest, arithmetic, algebra)
 
-commands += Command.command("build") { state =>
-  "clean" ::
+commands ++= Seq(
+  Command.command("build") { state =>
     "scalafmtCheckAll" ::
-    "scalafmtSbtCheck" ::
-    "coverage" ::
-    "test" ::
-    "coverageReport" ::
-    state
-}
+      "scalafmtSbtCheck" ::
+      "coverage" ::
+      "test" ::
+      "coverageReport" ::
+      state
+  },
+  Command.command("rebuild") { state =>
+    "clean" :: "build" :: state
+  },
+)

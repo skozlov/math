@@ -50,7 +50,9 @@ throw new RuntimeException("This code should never be executed")
 ```
 
 3. Format Scala and SBT files (`sbt scalafmtAll scalafmtSbt`).
-4. Verify the code (`sbt build`).
+4. Verify the code (`sbt rebuild`).
+   This commands performs `sbt clean` and then builds the project.
+   To skip `clean` during development, use `sbt build`.
 5. Make sure that the branch is clean:
     - typically, contains one commit with a clear message,
     - contains no merge commits.

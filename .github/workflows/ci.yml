@@ -15,4 +15,4 @@ jobs:
           distribution: temurin
           cache: sbt
       - name: Build
-        run: sbt build
+        run: sbt rebuild
