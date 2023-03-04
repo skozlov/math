@@ -10,27 +10,89 @@ import java.util.regex.Pattern
 import scala.annotation.tailrec
 import scala.collection.mutable.{LinkedHashSet, StringBuilder}
 
+/**
+ * Number which is represented as a fraction of two integers, a numerator and a
+ * denominator.
+ *
+ * It is in the canonical form, i.e. the fraction is irreducible and the
+ * denominator is positive.
+ *
+ * @see
+ *   [[https://en.wikipedia.org/wiki/Rational_number]]
+ */
 case class Rational private (numerator: BigInt, denominator: BigInt)
     extends Real
     with Ordered[Rational] {
+
   import Implicits.{bigIntToRational, longToRational}
 
+  /**
+   * Helps to implicitly convert a value to Rational.
+   *
+   * @example
+   *   {{{
+   *   import com.github.skozlov.math.arithmetic.Implicits._
+   *   val half = 1.r / 2
+   *   }}}
+   */
   val r: Rational = this
 
+  /**
+   * Sequence with one element, interval containing only this number itself.
+   */
   override val approximations: Seq[Real.Approximation] = {
     val bound = Real.Approximation.RationalBound(this)
     Seq(Real.Approximation.Interval(bound, bound))
   }
 
+  /**
+   * -1 if this number is less than 0, +1 if it is greater than 0, 0 if it is
+   * equal to 0.
+   */
   val sign: Int = numerator.signum
 
+  /**
+   * true if this number is an integer number, false otherwise
+   */
   lazy val isInt: Boolean = denominator == BigInt(1)
 
+  /**
+   * Nearest integer which is equal to this number or is closer to 0.
+   *
+   * @example
+   *   {{{-2.integerPart // -2}}}
+   * @example
+   *   {{{(-5.r / 2).integerPart // -2}}}
+   * @example
+   *   {{{(5.r / 2).integerPart // 2}}}
+   */
   lazy val integerPart: BigInt = numerator / denominator
 
+  /**
+   * This number minus its [[integerPart]].
+   *
+   * @example
+   *   {{{(5.r / 2).fractionalPart // 1/2}}}
+   * @example
+   *   {{{(-5.r / 2).fractionalPart // -1/2}}}
+   */
   lazy val fractionalPart: Rational =
     new Rational(numerator % denominator, denominator)
 
+  /**
+   * Represents this number in positional notation with the specified radix (10
+   * by default). The repetend (if any) is enclosed in parentheses.
+   * @throws IllegalArgumentException
+   *   if radix is less than 2 or greater than 36
+   * @example
+   *   {{{(1.r / 2).toPositional() // 0.5}}}
+   * @example
+   *   {{{(1.r / 3).toPositional() // 0.(3)}}}
+   * @see
+   *   [[https://en.wikipedia.org/wiki/Repeating_decimal]]
+   * @see
+   *   [[https://en.wikipedia.org/wiki/Positional_notation]]
+   */
   // noinspection ReferenceMustBePrefixed
   def toPositional(radix: Int = 10): String = {
     checkNumberFormatRadix(radix)
@@ -83,6 +145,22 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     }
   }
 
+  /**
+   * Represents this number as a fraction of its numerator and denominator, both
+   * represented in positional notation with the specified radix (10 by
+   * default). If this number is an integer then the denominator is omitted.
+   *
+   * @throws IllegalArgumentException
+   *   if radix is less than 2 or greater than 36
+   * @example
+   *   {{{3.toCommonFraction(2) // 11}}}
+   * @example
+   *   {{{(-4.r / 3).toCommonFraction(2) // -100/11}}}
+   * @see
+   *   [[https://en.wikipedia.org/wiki/Fraction]]
+   * @see
+   *   [[https://en.wikipedia.org/wiki/Positional_notation]]
+   */
   def toCommonFraction(radix: Int = 10): String = {
     checkNumberFormatRadix(radix)
     val numeratorPart = numerator.toString(radix)
@@ -94,6 +172,31 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     }
   }
 
+  /**
+   * Represents this number as a sum of its quotient and remainder, both
+   * represented in positional notation with the specified radix (10 by
+   * default).
+   *
+   * If this number is an integer then its remainder (0) is omitted.
+   *
+   * If this number is not an integer and its quotient is 0 then this quotient
+   * is omitted.
+   *
+   * @throws IllegalArgumentException
+   *   if radix is less than 2 or greater than 36
+   * @example
+   *   {{{0.toMixedFraction(2) // 0}}}
+   * @example
+   *   {{{(-2).toMixedFraction(2) // -10}}}
+   * @example
+   *   {{{(-1.r / 2).toMixedFraction(2) // -1/10}}}
+   * @example
+   *   {{{(-3.r / 2).toMixedFraction(2) // -1 1/10}}}
+   * @see
+   *   [[https://en.wikipedia.org/wiki/Fraction]]
+   * @see
+   *   [[https://en.wikipedia.org/wiki/Positional_notation]]
+   */
   def toMixedFraction(radix: Int = 10): String = {
     checkNumberFormatRadix(radix)
     if (this.isInt) {
@@ -107,6 +210,9 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     }
   }
 
+  /**
+   * The same as [[toMixedFraction]] with radix = 10.
+   */
   override lazy val toString: String = toMixedFraction()
 
   override def unary_- : Rational = new Rational(-numerator, denominator)
@@ -156,8 +262,17 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     case _ => super.*(that)
   }
 
+  /**
+   * 1 / this.
+   * @throws ArithmeticException
+   *   if this number is 0.
+   */
   override def inverted: Rational = Rational(denominator, numerator)
 
+  /**
+   * @throws ArithmeticException
+   *   if `that` is 0
+   */
   def /(that: Rational): Rational = {
     if (that.numerator == BigInt(0)) {
       throw new ArithmeticException("Division by zero")
@@ -170,6 +285,9 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     case _ => super./(that)
   }
 
+  /**
+   * Largest integer which is less than or equal to this number.
+   */
   def floor: BigInt = {
     if (this.isInt || this > 0) {
       integerPart
@@ -179,6 +297,9 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     }
   }
 
+  /**
+   * Smallest integer which is greater than or equal to this number.
+   */
   def ceil: BigInt = {
     if (this.isInt || this < 0) {
       integerPart
@@ -212,6 +333,12 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     (this / precision).round * precision
   }
 
+  /**
+   * This number raised to the power of `exp`.
+   *
+   * @throws ArithmeticException
+   *   if this number is 0 and `exp` is negative.
+   */
   override def pow(exp: BigInt): Rational = {
     if (exp == BigInt(0)) {
       1
@@ -236,10 +363,23 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     }
   }
 
+  /**
+   * Alias for [[com.github.skozlov.math.arithmetic.Rational#pow(scala.math.BigInt)]].
+   */
   override def ^(exp: BigInt): Rational = this pow exp
 }
 
 object Rational {
+
+  /**
+   * Creates `Rational` equal to `numerator / denominator` (where `/` is the
+   * standard division, not the integer division). Note that the fraction is
+   * converted to its canonical form, i.e. the resulting fraction is irreducible
+   * and the denominator is positive.
+   *
+   * @throws ArithmeticException
+   *   if `denominator` is 0.
+   */
   def apply(numerator: BigInt, denominator: BigInt): Rational = {
     if (denominator == 0) {
       throw new ArithmeticException("Division by zero")
@@ -253,6 +393,10 @@ object Rational {
     }
   }
 
+  /**
+   * Creates `Rational` representing the given integer. It is an equivalent of
+   * `Rational(n, 1)`.
+   */
   def apply(n: BigInt): Rational = new Rational(n, 1)
 
   private val intPattern = Pattern.compile("^-?[0-9a-zA-Z]+$")
@@ -271,6 +415,28 @@ object Rational {
     """^(?<int>-?[0-9a-zA-Z]+)\.(?<nonRepeating>[0-9a-zA-Z]*)?\((?<repetend>[0-9a-zA-Z]+)\)$"""
   )
 
+  /**
+   * Translates the string representation of a `Rational` in the specified `radix` into a `Rational`.
+   *
+   * Supported representations:
+   * <ul>
+   *     <li>
+   *         Integer (optional `-` followed by non-empty sequence of alpha-numeric symbols), e.g. `-123`.
+   *     </li>
+   *     <li>
+   *         Common fraction (`numerator`/`denominator`), e.g. `-123/456`.
+   *     </li>
+   *     <li>
+   *         Mixed fraction (quotient and remainder separated by the whitespace), e.g. `-123 456/789`.
+   *     </li>
+   *     <li>
+   *         Positional fraction with optional trailing repeating pattern, e.g. `-123.456` or `-123.456(789)`.
+   *     </li>
+   * </ul>
+   *
+   * @throws IllegalArgumentException if radix is less than 2 or greater than 36.
+   * @throws NumberFormatException    if `serialized` is not a valid representation of `Rational` in the specified `radix`.
+   */
   @throws[NumberFormatException]
   def apply(serialized: String, radix: Int = 10): Rational = {
     checkNumberFormatRadix(radix)

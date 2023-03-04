@@ -269,8 +269,8 @@ class RationalTest extends Test {
     }
     3.toCommonFraction(2) shouldBe "11"
     (-3).toCommonFraction(2) shouldBe "-11"
-    (1.r / 3).toCommonFraction(2) shouldBe "1/11"
-    (-1.r / 3).toCommonFraction(2) shouldBe "-1/11"
+    (4.r / 3).toCommonFraction(2) shouldBe "100/11"
+    (-4.r / 3).toCommonFraction(2) shouldBe "-100/11"
 
     1.toCommonFraction(36) shouldBe "1"
     intercept[IllegalArgumentException] {
