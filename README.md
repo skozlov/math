@@ -11,7 +11,7 @@ https://github.com/skozlov/math/blob/24e28a6fefb4de33a78c83fc747e65ec851425be/de
 
 [Real numbers](https://en.wikipedia.org/wiki/Real_number) with arbitrary
 precision:
-https://github.com/skozlov/math/blob/8777a861731175837163bd45b88c198d24cb25d1/demo/src/main/scala/com/github/skozlov/math/demo/arithmetic/quickstart/real.sc#L1-L4
+https://github.com/skozlov/math/blob/0ebf99273cb510f262f3892bfdbcc990ccc0b34e/demo/src/main/scala/com/github/skozlov/math/demo/arithmetic/quickstart/real.sc#L1-L4
 
 [Complex numbers](https://en.wikipedia.org/wiki/Complex_number):
 https://github.com/skozlov/math/blob/8777a861731175837163bd45b88c198d24cb25d1/demo/src/main/scala/com/github/skozlov/math/demo/arithmetic/quickstart/complex.sc#L1-L4
