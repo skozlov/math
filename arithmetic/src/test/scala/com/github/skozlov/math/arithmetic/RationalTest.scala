@@ -200,12 +200,12 @@ class RationalTest extends Test {
     (-1.r / 2).sign shouldBe -1
   }
 
-  "isWhole" should "work as expected" in {
+  "isInt" should "work as expected" in {
     for (r <- Seq[Rational](0, 2, -2)) {
-      r.isWhole shouldBe true
+      r.isInt shouldBe true
     }
     for (r <- Seq(1.r / 2, (-1).r / 2, 3.r / 2, (-3).r / 2)) {
-      r.isWhole shouldBe false
+      r.isInt shouldBe false
     }
   }
 

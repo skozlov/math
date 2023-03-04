@@ -24,7 +24,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
 
   val sign: Int = numerator.signum
 
-  lazy val isWhole: Boolean = denominator == BigInt(1)
+  lazy val isInt: Boolean = denominator == BigInt(1)
 
   lazy val integerPart: BigInt = numerator / denominator
 
@@ -69,7 +69,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     }
 
     val integerPartResult = integerPart.toString(radix)
-    if (this.isWhole) {
+    if (this.isInt) {
       integerPartResult
     }
     else {
@@ -86,7 +86,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
   def toCommonFraction(radix: Int = 10): String = {
     checkNumberFormatRadix(radix)
     val numeratorPart = numerator.toString(radix)
-    if (isWhole) {
+    if (isInt) {
       numeratorPart
     }
     else {
@@ -96,7 +96,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
 
   def toMixedFraction(radix: Int = 10): String = {
     checkNumberFormatRadix(radix)
-    if (this.isWhole) {
+    if (this.isInt) {
       numerator.toString(radix)
     }
     else if (integerPart == BigInt(0)) {
@@ -171,7 +171,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
   }
 
   def floor: BigInt = {
-    if (this.isWhole || this > 0) {
+    if (this.isInt || this > 0) {
       integerPart
     }
     else {
@@ -180,7 +180,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
   }
 
   def ceil: BigInt = {
-    if (this.isWhole || this < 0) {
+    if (this.isInt || this < 0) {
       integerPart
     }
     else {
