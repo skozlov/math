@@ -11,12 +11,10 @@ https://github.com/skozlov/math/blob/24e28a6fefb4de33a78c83fc747e65ec851425be/de
 
 [Real numbers](https://en.wikipedia.org/wiki/Real_number) with arbitrary
 precision:
-
-***TODO***
+https://github.com/skozlov/math/blob/8777a861731175837163bd45b88c198d24cb25d1/demo/src/main/scala/com/github/skozlov/math/demo/arithmetic/quickstart/real.sc#L1-L4
 
 [Complex numbers](https://en.wikipedia.org/wiki/Complex_number):
-
-***TODO***
+https://github.com/skozlov/math/blob/8777a861731175837163bd45b88c198d24cb25d1/demo/src/main/scala/com/github/skozlov/math/demo/arithmetic/quickstart/complex.sc#L1-L4
 
 ### Algebraic Structures
 
@@ -29,8 +27,7 @@ For example,
 if you declare that the string concatenation is associative and has an identity
 element,
 then you can use it as a monoid:
-
-***TODO***
+https://github.com/skozlov/math/blob/8777a861731175837163bd45b88c198d24cb25d1/demo/src/main/scala/com/github/skozlov/math/demo/algebra/quickstart/stringConcat.sc#L1-L25
 
 ## Contributing
 
