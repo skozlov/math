@@ -32,7 +32,7 @@ case class Rational private (numerator: BigInt, denominator: BigInt)
     new Rational(numerator % denominator, denominator)
 
   // noinspection ReferenceMustBePrefixed
-  def toPeriodic(radix: Int = 10): String = {
+  def toPositional(radix: Int = 10): String = {
     checkNumberFormatRadix(radix)
 
     @tailrec
@@ -264,11 +264,11 @@ object Rational {
     """^(?<int>-?[0-9a-zA-Z]+) (?<num>[0-9a-zA-Z]+)/(?<den>[0-9a-zA-Z]+)$"""
   )
 
-  private val nonPeriodicPattern =
+  private val positionalTerminatingPattern =
     Pattern.compile("""^(?<int>-?[0-9a-zA-Z]+)\.(?<frac>[0-9a-zA-Z]+)$""")
 
-  private val periodicPattern = Pattern.compile(
-    """^(?<int>-?[0-9a-zA-Z]+)\.(?<nonPeriodic>[0-9a-zA-Z]*)?\((?<period>[0-9a-zA-Z]+)\)$"""
+  private val positionalRepeatingPattern = Pattern.compile(
+    """^(?<int>-?[0-9a-zA-Z]+)\.(?<nonRepeating>[0-9a-zA-Z]*)?\((?<repetend>[0-9a-zA-Z]+)\)$"""
   )
 
   @throws[NumberFormatException]
@@ -300,52 +300,57 @@ object Rational {
           intPart + fracPartAbs
         }
       })
-      .orElse(nonPeriodicPattern.matcher(serialized) ifMatches { matcher =>
-        val intPartSource = matcher.group("int")
-        val intPart = Rational(BigInt(intPartSource, radix))
-        val normalizedFrac = matcher.group("frac") dropRightWhile { _ == '0' }
-        if (normalizedFrac.isEmpty) {
-          intPart
-        }
-        else {
-          val numerator = BigInt(normalizedFrac, radix)
-          val denominator = BigInt(radix) pow normalizedFrac.length
-          val fracPartAbs = Rational(numerator, denominator)
+      .orElse(positionalTerminatingPattern.matcher(serialized) ifMatches {
+        matcher =>
+          val intPartSource = matcher.group("int")
+          val intPart = Rational(BigInt(intPartSource, radix))
+          val normalizedFrac = matcher.group("frac") dropRightWhile { _ == '0' }
+          if (normalizedFrac.isEmpty) {
+            intPart
+          }
+          else {
+            val numerator = BigInt(normalizedFrac, radix)
+            val denominator = BigInt(radix) pow normalizedFrac.length
+            val fracPartAbs = Rational(numerator, denominator)
+            if (intPartSource startsWith "-") {
+              intPart - fracPartAbs
+            }
+            else {
+              intPart + fracPartAbs
+            }
+          }
+      })
+      .orElse(positionalRepeatingPattern.matcher(serialized) ifMatches {
+        matcher =>
+          val intPartSource = matcher.group("int")
+          val intPart = Rational(BigInt(intPartSource, radix))
+          val nonRepeating = matcher.group("nonRepeating")
+          val repetend = matcher.group("repetend")
+          val (nonRepeatingNumerator, nonRepeatingDenominator) = {
+            if (nonRepeating.isEmpty) {
+              (BigInt(0), BigInt(1))
+            }
+            else {
+              (
+                BigInt(nonRepeating, radix),
+                BigInt(radix) pow nonRepeating.length,
+              )
+            }
+          }
+          val fracPartAbs =
+            (
+              Rational(nonRepeatingNumerator)
+                + Rational(
+                  BigInt(repetend, radix),
+                  (BigInt(radix) pow repetend.length) - 1,
+                )
+            ) / Rational(nonRepeatingDenominator)
           if (intPartSource startsWith "-") {
             intPart - fracPartAbs
           }
           else {
             intPart + fracPartAbs
           }
-        }
-      })
-      .orElse(periodicPattern.matcher(serialized) ifMatches { matcher =>
-        val intPartSource = matcher.group("int")
-        val intPart = Rational(BigInt(intPartSource, radix))
-        val nonPeriodic = matcher.group("nonPeriodic")
-        val period = matcher.group("period")
-        val (nonPeriodicNumerator, nonPeriodicDenominator) = {
-          if (nonPeriodic.isEmpty) {
-            (BigInt(0), BigInt(1))
-          }
-          else {
-            (BigInt(nonPeriodic, radix), BigInt(radix) pow nonPeriodic.length)
-          }
-        }
-        val fracPartAbs =
-          (
-            Rational(nonPeriodicNumerator)
-              + Rational(
-                BigInt(period, radix),
-                (BigInt(radix) pow period.length) - 1,
-              )
-          ) / Rational(nonPeriodicDenominator)
-        if (intPartSource startsWith "-") {
-          intPart - fracPartAbs
-        }
-        else {
-          intPart + fracPartAbs
-        }
       })
       .applyOrElse[Unit, Rational](
         (),

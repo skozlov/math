@@ -140,7 +140,7 @@ class RationalTest extends Test {
       }
     }
 
-    def checkNonPeriodic(
+    def checkNonRepeating(
         source: String,
         radix: Int,
         expected: Rational,
@@ -161,13 +161,13 @@ class RationalTest extends Test {
     checkInt("1295", radix = 10, 1295)
     checkInt("zz", radix = 36, 1295)
 
-    checkNonPeriodic("0.11", radix = 2, 3.r / 4)
-    checkNonPeriodic("0.99", radix = 10, 99.r / 100)
-    checkNonPeriodic("0.zz", radix = 36, 1295.r / 1296)
+    checkNonRepeating("0.11", radix = 2, 3.r / 4)
+    checkNonRepeating("0.99", radix = 10, 99.r / 100)
+    checkNonRepeating("0.zz", radix = 36, 1295.r / 1296)
 
-    checkNonPeriodic("11.11", radix = 2, 3 + 3.r / 4)
-    checkNonPeriodic("99.99", radix = 10, 99 + 99.r / 100)
-    checkNonPeriodic("zz.zz", radix = 36, 1295 + 1295.r / 1296)
+    checkNonRepeating("11.11", radix = 2, 3 + 3.r / 4)
+    checkNonRepeating("99.99", radix = 10, 99 + 99.r / 100)
+    checkNonRepeating("zz.zz", radix = 36, 1295 + 1295.r / 1296)
 
     checkAbs("0.(03)", radix = 10, 1.r / 33)
     checkAbs("99.(03)", radix = 10, 99 + 1.r / 33)
@@ -237,9 +237,9 @@ class RationalTest extends Test {
     check(-5.r / 2, -1.r / 2)
   }
 
-  "toPeriodic" should "work as expected" in {
+  "toPositional" should "work as expected" in {
     def check(r: Rational, radix: Int, expected: String): Unit = {
-      r.toPeriodic(radix) shouldBe expected
+      r.toPositional(radix) shouldBe expected
     }
 
     for (radix <- Seq(2, 10, 16)) {
