@@ -187,6 +187,9 @@ class RationalTest extends Test {
       .shouldBe("""For input string: "9" under radix 2""")
     intercept[NumberFormatException] { Rational("1 1/1.1") }.getMessage
       .shouldBe("Cannot parse rational number: 1 1/1.1")
+    intercept[IllegalArgumentException] {
+      Rational("1", radix = 37)
+    }.getMessage shouldBe "requirement failed: Radix 37 is out of range Range 2 to 36"
   }
 
   "stringToRational" should "work" in {
@@ -264,6 +267,11 @@ class RationalTest extends Test {
     check(-19.r / 6, 2, "-11.0(01)")
     check(6931.r / 70, 10, "99.0(142857)")
     check(-6931.r / 70, 10, "-99.0(142857)")
+
+    check(1.r, 36, "1")
+    intercept[IllegalArgumentException] {
+      1.toPositional(37)
+    }.getMessage shouldBe "requirement failed: Radix 37 is out of range Range 2 to 36"
   }
 
   "toCommonFraction" should "work as expected" in {
@@ -278,6 +286,11 @@ class RationalTest extends Test {
     check(-3, 2, "-11")
     check(1.r / 3, 2, "1/11")
     check(-1.r / 3, 2, "-1/11")
+
+    1.toCommonFraction(36) shouldBe "1"
+    intercept[IllegalArgumentException] {
+      1.toCommonFraction(37)
+    }.getMessage shouldBe "requirement failed: Radix 37 is out of range Range 2 to 36"
   }
 
   "toMixedFraction" should "work as expected" in {
@@ -292,6 +305,11 @@ class RationalTest extends Test {
     check(-1.r / 2, 2, "-1/10")
     check(3.r / 2, 2, "1 1/10")
     check(-3.r / 2, 2, "-1 1/10")
+
+    1.toMixedFraction(36) shouldBe "1"
+    intercept[IllegalArgumentException] {
+      1.toMixedFraction(37)
+    }.getMessage shouldBe "requirement failed: Radix 37 is out of range Range 2 to 36"
   }
 
   "toString" should "return the same string as toMixedFraction(10)" in {
