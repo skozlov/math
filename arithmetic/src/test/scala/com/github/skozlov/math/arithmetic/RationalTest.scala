@@ -2,6 +2,7 @@ package com.github.skozlov.math.arithmetic
 
 import com.github.skozlov.commons.scala.test.Test
 
+//noinspection RedundantDefaultArgument
 class RationalTest extends Test {
   import Implicits._
 
@@ -80,13 +81,9 @@ class RationalTest extends Test {
   }
 
   "-r" should "work as expected" in {
-    def check(r: Rational, expected: Rational): Unit = {
-      -r shouldBe expected
-    }
-
-    check(0, 0)
-    check(2, -2)
-    check(-2, 2)
+    -0.r shouldBe 0.r
+    -2.r shouldBe (-2).r
+    -(-2.r) shouldBe 2.r
     -(5.r / 2) shouldBe (-5).r / 2
     -((-5.r) / 2) shouldBe 5.r / 2
   }
@@ -227,65 +224,53 @@ class RationalTest extends Test {
   }
 
   "fractionalPart" should "work as expected" in {
-    def check(r: Rational, expected: Rational): Unit = {
-      r.fractionalPart shouldBe expected
-    }
-
-    check(0, 0)
-    check(2, 0)
-    check(-2, 0)
-    check(1.r / 2, 1.r / 2)
-    check(-1.r / 2, -1.r / 2)
-    check(5.r / 2, 1.r / 2)
-    check(-5.r / 2, -1.r / 2)
+    0.fractionalPart shouldBe 0.r
+    2.fractionalPart shouldBe 0.r
+    (-2).fractionalPart shouldBe 0.r
+    (1.r / 2).fractionalPart shouldBe 1.r / 2
+    (-1.r / 2).fractionalPart shouldBe -1.r / 2
+    (5.r / 2).fractionalPart shouldBe 1.r / 2
+    (-5.r / 2).fractionalPart shouldBe -1.r / 2
   }
 
   "toPositional" should "work as expected" in {
-    def check(r: Rational, radix: Int, expected: String): Unit = {
-      r.toPositional(radix) shouldBe expected
-    }
-
     for (radix <- Seq(2, 10, 16)) {
-      check(0, radix, "0")
+      0.toPositional(radix) shouldBe "0"
     }
 
-    check(3, 2, "11")
-    check(-3, 2, "-11")
-    check(99, 10, "99")
-    check(-99, 10, "-99")
-    check(255, 16, "ff")
-    check(-255, 16, "-ff")
+    3.toPositional(2) shouldBe "11"
+    (-3).toPositional(2) shouldBe "-11"
+    99.toPositional(10) shouldBe "99"
+    (-99).toPositional(10) shouldBe "-99"
+    255.toPositional(16) shouldBe "ff"
+    (-255).toPositional(16) shouldBe "-ff"
 
-    check(15.r / 4, 2, "11.11")
-    check(-15.r / 4, 2, "-11.11")
-    check(9999.r / 100, 10, "99.99")
-    check(-9999.r / 100, 10, "-99.99")
-    check(65535.r / 256, 16, "ff.ff")
-    check(-65535.r / 256, 16, "-ff.ff")
+    (15.r / 4).toPositional(2) shouldBe "11.11"
+    (-15.r / 4).toPositional(2) shouldBe "-11.11"
+    (9999.r / 100).toPositional(10) shouldBe "99.99"
+    (-9999.r / 100).toPositional(10) shouldBe "-99.99"
+    (65535.r / 256).toPositional(16) shouldBe "ff.ff"
+    (-65535.r / 256).toPositional(16) shouldBe "-ff.ff"
 
-    check(19.r / 6, 2, "11.0(01)")
-    check(-19.r / 6, 2, "-11.0(01)")
-    check(6931.r / 70, 10, "99.0(142857)")
-    check(-6931.r / 70, 10, "-99.0(142857)")
+    (19.r / 6).toPositional(2) shouldBe "11.0(01)"
+    (-19.r / 6).toPositional(2) shouldBe "-11.0(01)"
+    (6931.r / 70).toPositional(10) shouldBe "99.0(142857)"
+    (-6931.r / 70).toPositional(10) shouldBe "-99.0(142857)"
 
-    check(1.r, 36, "1")
+    1.toPositional(36) shouldBe "1"
     intercept[IllegalArgumentException] {
       1.toPositional(37)
     }.getMessage shouldBe "requirement failed: Radix 37 is out of range Range 2 to 36"
   }
 
   "toCommonFraction" should "work as expected" in {
-    def check(r: Rational, radix: Int, expected: String): Unit = {
-      r.toCommonFraction(radix) shouldBe expected
-    }
-
     for (radix <- Seq(2, 10, 16)) {
-      check(0, radix, "0")
+      0.toCommonFraction(radix) shouldBe "0"
     }
-    check(3, 2, "11")
-    check(-3, 2, "-11")
-    check(1.r / 3, 2, "1/11")
-    check(-1.r / 3, 2, "-1/11")
+    3.toCommonFraction(2) shouldBe "11"
+    (-3).toCommonFraction(2) shouldBe "-11"
+    (1.r / 3).toCommonFraction(2) shouldBe "1/11"
+    (-1.r / 3).toCommonFraction(2) shouldBe "-1/11"
 
     1.toCommonFraction(36) shouldBe "1"
     intercept[IllegalArgumentException] {
@@ -294,17 +279,13 @@ class RationalTest extends Test {
   }
 
   "toMixedFraction" should "work as expected" in {
-    def check(r: Rational, radix: Int, expected: String): Unit = {
-      r.toMixedFraction(radix) shouldBe expected
-    }
-
-    check(0, 2, "0")
-    check(2, 2, "10")
-    check(-2, 2, "-10")
-    check(1.r / 2, 2, "1/10")
-    check(-1.r / 2, 2, "-1/10")
-    check(3.r / 2, 2, "1 1/10")
-    check(-3.r / 2, 2, "-1 1/10")
+    0.toMixedFraction(2) shouldBe "0"
+    2.toMixedFraction(2) shouldBe "10"
+    (-2).toMixedFraction(2) shouldBe "-10"
+    (1.r / 2).toMixedFraction(2) shouldBe "1/10"
+    (-1.r / 2).toMixedFraction(2) shouldBe "-1/10"
+    (3.r / 2).toMixedFraction(2) shouldBe "1 1/10"
+    (-3.r / 2).toMixedFraction(2) shouldBe "-1 1/10"
 
     1.toMixedFraction(36) shouldBe "1"
     intercept[IllegalArgumentException] {
@@ -328,35 +309,27 @@ class RationalTest extends Test {
   }
 
   "floor" should "return the greatest integer which is not greater than this" in {
-    def check(r: Rational, expected: BigInt): Unit = {
-      r.floor shouldBe expected
-    }
-
-    check(0, 0)
-    check(2, 2)
-    check(-2, -2)
-    check(4.r / 3, 1)
-    check(-4.r / 3, -2)
-    check(5.r / 3, 1)
-    check(-5.r / 3, -2)
-    check(3.r / 2, 1)
-    check(-3.r / 2, -2)
+    0.r.floor shouldBe 0
+    2.r.floor shouldBe 2
+    (-2).r.floor shouldBe -2
+    (4.r / 3).floor shouldBe 1
+    (-4.r / 3).floor shouldBe -2
+    (5.r / 3).floor shouldBe 1
+    (-5.r / 3).floor shouldBe -2
+    (3.r / 2).floor shouldBe 1
+    (-3.r / 2).floor shouldBe -2
   }
 
   "ceil" should "return the least integer which is not less than this" in {
-    def check(r: Rational, expected: BigInt): Unit = {
-      r.ceil shouldBe expected
-    }
-
-    check(0, 0)
-    check(2, 2)
-    check(-2, -2)
-    check(4.r / 3, 2)
-    check(-4.r / 3, -1)
-    check(5.r / 3, 2)
-    check(-5.r / 3, -1)
-    check(3.r / 2, 2)
-    check(-3.r / 2, -1)
+    0.r.ceil shouldBe 0
+    2.r.ceil shouldBe 2
+    (-2).r.ceil shouldBe -2
+    (4.r / 3).ceil shouldBe 2
+    (-4.r / 3).ceil shouldBe -1
+    (5.r / 3).ceil shouldBe 2
+    (-5.r / 3).ceil shouldBe -1
+    (3.r / 2).ceil shouldBe 2
+    (-3.r / 2).ceil shouldBe -1
   }
 
   "round" should "work as expected" in {
